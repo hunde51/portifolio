@@ -1,9 +1,30 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
 import { ArrowUpRight, Mail, Github, Linkedin } from "lucide-react";
 import { Reveal } from "./Reveal";
 
+// ── Plug in your EmailJS IDs after setup ──────────────────────────────────────
+const EMAILJS_SERVICE_ID  = "service_nxrv4iu";
+const EMAILJS_TEMPLATE_ID = "template_cbs5lnx";
+const EMAILJS_PUBLIC_KEY  = "hlLIsms4ng18oMgZs";
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function Contact() {
-  const [sent, setSent] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, formRef.current!, EMAILJS_PUBLIC_KEY);
+      setStatus("sent");
+      formRef.current?.reset();
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <section id="contact" className="relative py-32 md:py-40">
       <div className="mx-auto max-w-5xl px-6">
@@ -13,7 +34,7 @@ export function Contact() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="font-display max-w-3xl text-balance text-[clamp(2.25rem,6vw,5rem)] leading-[1] tracking-tight">
+          <h2 className="font-roboto font-semibold max-w-3xl text-balance text-[clamp(2.25rem,6vw,5rem)] leading-[1] tracking-tight">
             Let's build something{" "}
             <span className="italic text-muted-foreground">meaningful.</span>
           </h2>
@@ -28,15 +49,14 @@ export function Contact() {
         <div className="mt-16 grid gap-10 md:grid-cols-[1.1fr_0.9fr]">
           <Reveal delay={0.15}>
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSent(true);
-              }}
+              ref={formRef}
+              onSubmit={handleSubmit}
               className="glass rounded-3xl p-7 shadow-soft"
             >
               <Field label="Your name">
                 <input
                   required
+                  name="from_name"
                   type="text"
                   className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground/60"
                   placeholder="Ada Lovelace"
@@ -45,6 +65,7 @@ export function Contact() {
               <Field label="Email">
                 <input
                   required
+                  name="from_email"
                   type="email"
                   className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground/60"
                   placeholder="you@studio.com"
@@ -53,6 +74,7 @@ export function Contact() {
               <Field label="What are you building?">
                 <textarea
                   required
+                  name="message"
                   rows={4}
                   className="w-full resize-none bg-transparent text-base outline-none placeholder:text-muted-foreground/60"
                   placeholder="A few sentences is plenty."
@@ -60,9 +82,10 @@ export function Contact() {
               </Field>
               <button
                 type="submit"
-                className="group mt-2 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition-transform hover:scale-[1.02]"
+                disabled={status === "sending"}
+                className="group mt-2 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition-transform hover:scale-[1.02] disabled:opacity-60"
               >
-                {sent ? "Thank you — I'll be in touch" : "Send message"}
+                {status === "sending" ? "Sending…" : status === "sent" ? "Thank you — I'll be in touch" : status === "error" ? "Failed — try again" : "Send message"}
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </button>
             </form>
@@ -74,20 +97,20 @@ export function Contact() {
                 <ContactRow
                   icon={<Mail className="h-4 w-4" />}
                   label="Email"
-                  value="hunde@example.com"
-                  href="mailto:hunde@example.com"
+                  value="hundetesfa6@gmail.com"
+                  href="mailto:hundetesfa6@gmail.com"
                 />
                 <ContactRow
                   icon={<Github className="h-4 w-4" />}
                   label="GitHub"
-                  value="github.com/hundetesfa"
-                  href="#"
+                  value="github.com/hunde51"
+                  href="https://github.com/hunde51"
                 />
                 <ContactRow
                   icon={<Linkedin className="h-4 w-4" />}
                   label="LinkedIn"
-                  value="linkedin.com/in/hundetesfa"
-                  href="#"
+                  value="linkedin.com/in/hunde51"
+                  href="https://linkedin.com/in/hunde51"
                 />
               </div>
               <p className="mt-10 text-sm leading-relaxed text-muted-foreground">
@@ -127,6 +150,8 @@ function ContactRow({
   return (
     <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className="group flex items-center justify-between gap-4 rounded-2xl px-1 py-2 transition-colors hover:bg-surface/60"
     >
       <div className="flex items-center gap-4">

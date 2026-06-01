@@ -1,17 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Github, X, ExternalLink } from "lucide-react";
+import { ArrowUpRight, Github, X, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { Reveal } from "./Reveal";
-import p1 from "@/assets/project-1.jpg";
-import p2 from "@/assets/project-2.jpg";
-import p3 from "@/assets/project-3.jpg";
-import p4 from "@/assets/project-4.jpg";
+import p1 from "@/assets/projects/auratrade/p-1.png";
+import p1b from "@/assets/projects/auratrade/p-2.png";
+import p1c from "@/assets/projects/auratrade/p-3.png";
+import p2 from "@/assets/projects/ecommerce/p-1.png";
+import p2b from "@/assets/projects/ecommerce/p-2.png";
+import p2c from "@/assets/projects/ecommerce/p-3.png";
+import p3 from "@/assets/projects/Relay-AI-Support/p-1.png";
+import p3b from "@/assets/projects/Relay-AI-Support/p-2.png";
+import p3c from "@/assets/projects/Relay-AI-Support/p-3.png";
 
 type Project = {
   title: string;
   tagline: string;
   description: string;
   image: string;
+  images: string[];
   tags: string[];
   label: string;
   status: string;
@@ -26,83 +32,79 @@ type Project = {
 
 const projects: Project[] = [
   {
-    title: "Atlas Intelligence",
-    tagline: "An agentic research workspace",
+    title: "AuraTrade",
+    tagline: "Real-Time Paper Trading Platform",
     description:
-      "A production agentic platform that orchestrates retrieval, planning, and tool-use to answer deep research questions over private knowledge bases.",
+      "A paper trading platform where users practice stock and crypto trading with $100,000 in virtual money — live market prices streamed every 2 seconds, real order execution, portfolio tracking, and an AI trading coach. Zero financial risk.",
     image: p1,
-    tags: ["LangGraph", "FastAPI", "Next.js", "Postgres"],
-    label: "AI System",
-    status: "Live Product",
-    live: "#",
-    github: "#",
-    overview:
-      "Atlas turns scattered company knowledge into a living research surface. Teams ask complex, multi-step questions; the system decomposes, retrieves, and synthesizes — citing sources at every step.",
-    architecture:
-      "A LangGraph supervisor coordinates retrieval, reasoning, and verification agents. FastAPI handles streaming responses; pgvector + Neon power retrieval; Next.js renders a calm, document-first interface.",
-    challenges:
-      "Designing deterministic-feeling outputs from a non-deterministic system. We built a verification loop that re-checks claims against retrieved spans before any answer is shown.",
-    ai: "Multi-agent orchestration with structured intermediate state, tool-use guardrails, and a citation contract that the UI enforces visually.",
-    stack: ["LangGraph", "LangChain", "FastAPI", "Next.js", "pgvector", "Neon", "AWS"],
-  },
-  {
-    title: "Lumen Workflows",
-    tagline: "Human-in-the-loop AI operations",
-    description:
-      "A workflow runtime where teams compose AI agents alongside humans — drafting, reviewing, and approving work in a single conversational surface.",
-    image: p2,
-    tags: ["LangChain", "FastAPI", "React", "Redis"],
+    images: [p1, p1b, p1c],
+    tags: ["FastAPI Cloud", "FastAPI", "Next.js", "Supabase", "Redis"],
     label: "Fullstack Platform",
-    status: "Production Ready",
-    live: "#",
-    github: "#",
-    overview:
-      "Lumen lets ops teams replace brittle automations with agent-driven workflows that ask for human input only when it matters.",
-    architecture:
-      "Event-driven backend in FastAPI, Redis-backed task queues, and a React client built around a thread-first conversation model. State is persisted at every step for full observability.",
-    challenges:
-      "Making partial automation feel safe. Every agent action is reversible, auditable, and gated by a clear human checkpoint.",
-    ai: "LangChain agents with strict tool schemas, plus a critic model that reviews drafts before they reach the human.",
-    stack: ["FastAPI", "LangChain", "React", "Redis", "Postgres", "AWS"],
-  },
-  {
-    title: "Form & Field",
-    tagline: "A modern commerce platform",
-    description:
-      "A fullstack storefront and admin built for independent fashion brands — fast, accessible, and shaped around the way real merchants work.",
-    image: p3,
-    tags: ["Next.js", "FastAPI", "Stripe", "Postgres"],
-    label: "Live Product",
     status: "Live Product",
-    live: "#",
-    github: "#",
+    live: "https://auratrade-platform.vercel.app/",
+    github: "https://github.com/hunde51/auratrade-platform",
     overview:
-      "A headless commerce platform that pairs a beautifully restrained storefront with an admin designed for daily merchandising work.",
+      "AuraTrade is a paper trading platform that lets users practice stock and crypto trading with $100,000 in virtual money — real market prices, real order execution, zero financial risk. Built for traders who want to sharpen their strategy before putting real capital on the line.",
     architecture:
-      "Next.js storefront with edge rendering, FastAPI service layer, Stripe for payments, and a fully typed admin SDK shared between client and server.",
+      "Market data is polled every 2 seconds from Alpaca/Polygon/Alpha Vantage via APScheduler, published to a Redis pub/sub channel, and broadcast to browser clients over WebSockets. FastAPI handles auth (JWT + argon2), trade execution, and portfolio state via SQLAlchemy async ORM on PostgreSQL. Celery + Redis manage background jobs; Prometheus exposes metrics at /metrics.",
     challenges:
-      "Achieving Lighthouse-grade performance without sacrificing rich product imagery — solved with progressive image strategies and disciplined data fetching.",
-    stack: ["Next.js", "FastAPI", "Stripe", "Postgres", "Tailwind"],
+      "Keeping live prices consistent across WebSocket clients, REST reads, and alert evaluation simultaneously. Solved by caching prices in Redis with a 5s TTL and running alert rule checks on every poll cycle — ensuring notifications fire within seconds of a price crossing a threshold.",
+    ai: "An AI trading coach powered by Gemini/OpenAI answers user questions, analyzes open positions, and surfaces market sentiment — giving traders contextual guidance without leaving the platform.",
+    stack: ["FastAPI", "FastAPI Cloud", "Next.js", "Supabase", "Postgres", "Redis"],
   },
   {
-    title: "Signal RAG",
+    title: "Nexus AI Shop",
+    tagline: "AI-powered marketplace built for Ethiopia",
+    description:
+      "A full-stack multi-role e-commerce platform with AI at its core. Sellers list products, customers shop with AI-powered semantic search and personalized recommendations, and admins manage the platform through a rich dashboard with AI-generated business insights, fraud detection, and demand forecasting.",
+    image: p2,
+    images: [p2, p2b, p2c],
+    tags: ["FastAPI", "React", "TypeScript", "PostgreSQL", "Google Gemini", "Qdrant", "LangChain", "Chapa"],
+    label: "Fullstack Platform",
+    status: "Live Product",
+    live: "https://smartshop-ethiopia-pojy.vercel.app",
+    github: "https://github.com/hunde51/smartshop-ethiopia",
+    overview:
+      "A production-deployed marketplace targeting Ethiopian commerce. Four distinct roles — customer, seller, admin, super admin — each with their own dashboard and permissions. Customers browse and buy, sellers manage inventory and track revenue, admins moderate products and users, super admins control the entire platform.",
+    architecture:
+      "React + TypeScript + Vite frontend on Vercel. FastAPI (Python) backend with async SQLAlchemy + PostgreSQL on FastAPI Cloud. AI layer: Google Gemini for embeddings and content generation, DeepSeek for reasoning agents, Qdrant as vector database for semantic search, LangChain/LangGraph for agentic workflows. Auth is JWT-based and role-scoped with a seller approval flow. Payments via Chapa + M-Pesa sandbox.",
+    challenges:
+      "Multi-role auth where the same email can hold both a customer and seller account simultaneously — required a role-scoped unique constraint on the users table and role-aware JWT resolution on every request.",
+    ai: "Semantic product search using Gemini embeddings stored in Qdrant with hybrid keyword + vector reranking. Role-scoped AI assistant with different capabilities per role. AI Insights dashboard with auto-generated restock alerts, pricing suggestions, and conversion analysis powered by Gemini on live sales data. Demand forecasting and fraud detection agents running via LangGraph.",
+    stack: ["FastAPI", "React", "TypeScript", "PostgreSQL", "Qdrant", "Gemini", "DeepSeek", "LangGraph", "Chapa", "M-Pesa", "Vercel"],
+  },
+  {
+    title: "Relay AI Support",
     tagline: "Knowledge retrieval, made answerable",
     description:
-      "A retrieval system tuned for technical teams — turning sprawling docs, tickets, and code into precise, cited answers inside the tools they already use.",
-    image: p4,
-    tags: ["RAG", "LangGraph", "Python", "AWS"],
+      "AI-assisted support that retrieves company knowledge and proposes safe, auditable actions for agents.",
+    image: p3,
+    images: [p3, p3b, p3c],
+    tags: ["RAG", "LangGraph", "Python", "Qdrant"],
     label: "AI System",
-    status: "Production Ready",
+    status: "Prototype / In development",
     live: "#",
-    github: "#",
+    github: "https://github.com/hunde51/Relay-AI-Support",
     overview:
-      "Signal indexes a company's written world and exposes it as a single, calm answer surface — across web, Slack, and IDE.",
+      "Relay AI Support indexes ticket history and support documents to surface relevant answers and suggested actions for support teams. It produces validated suggestions, requires human approval for risky actions, records audit logs, and can execute approved actions via pluggable tools. Built for support orgs and internal ops who need faster, auditable resolution workflows.",
     architecture:
-      "Hybrid retrieval (BM25 + dense), a re-ranker, and a small synthesis model behind a FastAPI service. LangGraph manages multi-hop questions.",
+      "Hybrid retrieval (dense vectors + vector store) with application-level ranking and agent nodes managed by LangGraph. A FastAPI backend handles API, tool registry, and AI workflows; async SQLAlchemy persists AI runs, audit logs, and ticket state. The vectorization pipeline writes embeddings to Qdrant.",
     challenges:
-      "Ranking quality across heterogeneous sources. We built domain-specific rerankers and a feedback loop that quietly improves retrieval over time.",
-    ai: "Hybrid RAG with adaptive query rewriting and a reranking ensemble; answers are composed under a strict citation contract.",
-    stack: ["Python", "FastAPI", "LangGraph", "AWS", "Neon"],
+      "Unreliable LLM outputs: centralized prompt templates and Pydantic v2 output schemas with render_and_validate helpers to parse and validate LLM responses. Unsafe tool execution: suggested-action workflow with requires_approval, RBAC checks, and AuditLog entries. Reproducible testing: DummyLLM and test scaffolding plus AI run persistence for deterministic tests.",
+    ai:
+      "Query → retrieve via Qdrant → agent nodes run LLM prompts (centralized templates) → synthesize candidate responses/actions → validate with Pydantic → create AISuggestedAction → human approval (if required) → execute via tool_service → persist AuditLog and AIToolCall.",
+    stack: [
+      "Python",
+      "FastAPI",
+      "LangGraph",
+      "LangChain",
+      "Google Gemini",
+      "Qdrant",
+      "SQLAlchemy",
+      "React",
+      "TypeScript",
+      "WebSockets",
+    ],
   },
 ];
 
@@ -118,8 +120,7 @@ export function Projects() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="font-display max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
-            Four products. All shipped.{" "}
+          <h2 className="font-roboto font-semibold max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
             <span className="italic text-muted-foreground">All in production.</span>
           </h2>
         </Reveal>
@@ -198,6 +199,8 @@ export function Projects() {
                       </button>
                       <a
                         href={p.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 rounded-full border hairline bg-card/50 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-card"
                       >
                         <Github className="h-4 w-4" />
@@ -224,8 +227,25 @@ function ProjectModal({
   project: Project | null;
   onClose: () => void;
 }) {
+  const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    if (!project) return;
+    const id = setInterval(() => {
+      setSlide((s) => (s + 1) % project.images.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [project, slide]);
+
+  function prev() {
+    setSlide((s) => (s - 1 + project!.images.length) % project!.images.length);
+  }
+  function next() {
+    setSlide((s) => (s + 1) % project!.images.length);
+  }
+
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={() => setSlide(0)}>
       {project && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -243,12 +263,22 @@ function ProjectModal({
             onClick={(e) => e.stopPropagation()}
             className="mx-auto my-10 max-w-4xl overflow-hidden rounded-3xl bg-background shadow-float"
           >
+            {/* Image slider */}
             <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface">
-              <img
-                src={project.image}
-                alt={`${project.title} cover`}
-                className="h-full w-full object-cover"
-              />
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={slide}
+                  src={project.images[slide]}
+                  alt={`${project.title} slide ${slide + 1}`}
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="h-full w-full object-cover"
+                />
+              </AnimatePresence>
+
+              {/* Close */}
               <button
                 onClick={onClose}
                 className="glass absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full text-foreground hover:bg-card"
@@ -256,6 +286,8 @@ function ProjectModal({
               >
                 <X className="h-4 w-4" />
               </button>
+
+              {/* Labels */}
               <div className="absolute left-5 top-5 flex gap-2">
                 <span className="glass rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-[0.16em]">
                   {project.label}
@@ -264,6 +296,38 @@ function ProjectModal({
                   <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
                   {project.status}
                 </span>
+              </div>
+
+              {/* Prev / Next arrows */}
+              <button
+                onClick={prev}
+                className="glass absolute left-4 top-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-full text-foreground hover:bg-card"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={next}
+                className="glass absolute right-4 top-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-full text-foreground hover:bg-card"
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+
+              {/* Dot indicators */}
+              <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
+                {project.images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSlide(i)}
+                    aria-label={`Go to slide ${i + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === slide
+                        ? "w-5 bg-foreground"
+                        : "w-2 bg-foreground/40 hover:bg-foreground/70"
+                    }`}
+                  />
+                ))}
               </div>
             </div>
 
@@ -299,6 +363,8 @@ function ProjectModal({
               <div className="mt-10 flex flex-wrap gap-3 border-t hairline pt-8">
                 <a
                   href={project.live}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-transform hover:scale-[1.02]"
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -306,6 +372,8 @@ function ProjectModal({
                 </a>
                 <a
                   href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full border hairline bg-card/50 px-5 py-2.5 text-sm font-medium hover:bg-card"
                 >
                   <Github className="h-4 w-4" />

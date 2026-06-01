@@ -11,7 +11,7 @@ export function About() {
         </Reveal>
 
         <Reveal delay={0.05}>
-          <h2 className="font-display text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
+          <h2 className="font-roboto font-semibold text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
             I build quiet, intelligent systems that{" "}
             <span className="italic text-muted-foreground">feel human</span>.
           </h2>

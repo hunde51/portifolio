@@ -47,7 +47,7 @@ export function Skills() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="font-display max-w-2xl text-balance text-[clamp(2rem,5vw,3.5rem)] leading-[1.05] tracking-tight">
+          <h2 className="font-roboto font-semibold max-w-2xl text-balance text-[clamp(2rem,5vw,3.5rem)] leading-[1.05] tracking-tight">
             A toolkit refined over thousands of small decisions.
           </h2>
         </Reveal>

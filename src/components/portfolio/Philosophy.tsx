@@ -45,8 +45,7 @@ export function Philosophy() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="font-display max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
-            How I think about the work,{" "}
+          <h2 className="font-roboto font-semibold max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
             <span className="italic text-muted-foreground">in eight notes.</span>
           </h2>
         </Reveal>
