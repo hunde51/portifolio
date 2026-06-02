@@ -43,9 +43,9 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
-            Fullstack developer & agentic AI builder. I design scalable backend
-            systems, intelligent AI workflows, and human-centered digital
-            experiences.
+            I build intelligent software systems that solve real business problems
+            with reliability, clarity, and attention to detail. Focused on
+            backend engineering, scalable APIs, and modern AI workflows.
           </motion.p>
 
           <motion.div

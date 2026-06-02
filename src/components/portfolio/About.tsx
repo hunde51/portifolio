@@ -12,36 +12,30 @@ export function About() {
 
         <Reveal delay={0.05}>
           <h2 className="font-roboto font-semibold text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
-            I build quiet, intelligent systems that{" "}
-            <span className="italic text-muted-foreground">feel human</span>.
+            I build intelligent software systems that solve real business problems with{" "}
+            <span className="italic text-muted-foreground">reliability and clarity</span>.
           </h2>
         </Reveal>
 
         <div className="mt-12 grid gap-10 text-pretty text-base leading-relaxed text-muted-foreground md:grid-cols-2 md:text-lg">
           <Reveal delay={0.1}>
             <p>
-              I'm a backend-leaning fullstack engineer with a strong sense for
-              the frontend — the kind of builder who cares as much about the
-              shape of an API as the rhythm of a button press.
+              My background spans backend engineering, full-stack development, and modern AI systems, allowing me to design solutions that are both technically robust and practical for the people who use them. From scalable APIs and data-intensive platforms to agentic AI workflows, retrieval systems, and automation tools, I focus on building technology that creates measurable value.
             </p>
           </Reveal>
           <Reveal delay={0.15}>
             <p>
-              Lately, most of my time goes into agentic AI systems: retrieval
-              pipelines, orchestrated agents, and small models doing precise
-              work inside larger products.
+              I care deeply about architecture, performance, and usability. The best systems are not the most complex—they are the ones that fit naturally into a workflow, reduce friction, and consistently deliver results.
             </p>
           </Reveal>
           <Reveal delay={0.2}>
             <p>
-              I believe in clean architecture, real performance, and interfaces
-              that respect attention. Every layer should earn its place.
+              Recently, much of my work has centered on AI-powered products: orchestrated agents, retrieval pipelines, and specialized models that help teams automate tasks, surface knowledge, and make better decisions. My goal is always the same: turn complexity into tools that feel simple, useful, and dependable.
             </p>
           </Reveal>
           <Reveal delay={0.25}>
             <p>
-              When something I build ships into someone's daily workflow and
-              quietly does its job — that's the bar I'm chasing.
+              When a product becomes an indispensable part of someone's day because it quietly solves a problem better than the alternatives, that's success.
             </p>
           </Reveal>
         </div>

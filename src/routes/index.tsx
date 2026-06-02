@@ -11,17 +11,17 @@ import { Footer } from "@/components/portfolio/Footer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hunde Tesfa — Fullstack Developer & Agentic AI Builder" },
+      { title: "Hunde Tesfa — Intelligent Systems & Agentic AI" },
       {
         name: "description",
         content:
-          "Portfolio of Hunde Tesfa — fullstack engineer and agentic AI builder designing scalable backend systems and human-centered digital experiences.",
+          "Hunde Tesfa — full-stack engineer building intelligent software systems that solve real business problems with reliability, clarity, and attention to detail.",
       },
-      { property: "og:title", content: "Hunde Tesfa — Fullstack & Agentic AI" },
+      { property: "og:title", content: "Hunde Tesfa — Intelligent Systems & Agentic AI" },
       {
         property: "og:description",
         content:
-          "Scalable backend systems, intelligent AI workflows, and human-centered products.",
+          "Building technically robust and practical AI workflows, scalable APIs, and data-intensive platforms.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -58,3 +58,6 @@ function Index() {
     </main>
   );
 }
+
+
+// hunde-portrait
