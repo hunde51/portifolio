@@ -83,7 +83,7 @@ const projects: Project[] = [
     tags: ["RAG", "LangGraph", "Python", "Qdrant"],
     label: "AI System",
     status: "Prototype / In development",
-    live: "#",
+    live: "https://relay-ai-support.fastapicloud.dev/docs",
     github: "https://github.com/hunde51/Relay-AI-Support",
     overview:
       "Relay AI Support indexes ticket history and support documents to surface relevant answers and suggested actions for support teams. It produces validated suggestions, requires human approval for risky actions, records audit logs, and can execute approved actions via pluggable tools. Built for support orgs and internal ops who need faster, auditable resolution workflows.",
