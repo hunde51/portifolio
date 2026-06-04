@@ -76,7 +76,7 @@ export function Hero() {
             transition={{ duration: 1, delay: 0.5 }}
             className="mt-12 overflow-hidden"
           >
-            <div className="flex w-max animate-marquee gap-x-8 text-xs uppercase tracking-[0.18em] text-muted-foreground/70">
+            <div className="flex w-max animate-marquee gap-x-8 text-xs uppercase tracking-[0.18em] text-muted-foreground/70 hover:[animation-play-state:paused]">
               {[...stack, ...stack, ...stack].map((s, i) => (
                 <span key={i} className="whitespace-nowrap">{s}</span>
               ))}
@@ -97,15 +97,16 @@ export function Hero() {
               alt="Portrait of Hunde Tesfa"
               width={1024}
               height={1280}
-              className="h-full w-full object-cover transition-all duration-700 dark:[filter:grayscale(1)_brightness(0.88)]"
+              className="h-full w-full object-cover transition-all duration-700 dark:[filter:sepia(0.28)_saturate(1.05)_contrast(1.16)_brightness(0.58)]"
             />
             {/* Light mode gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-transparent to-transparent dark:hidden" />
-            {/* Dark mode overlay — warm espresso tint */}
+            {/* Dark mode overlay — gold-dark tint */}
             <div
               className="absolute inset-0 hidden dark:block"
               style={{
-                background: "linear-gradient(to top, oklch(0.12 0.012 55 / 0.75) 0%, oklch(0.12 0.012 55 / 0.3) 50%, transparent 100%)",
+                background:
+                  "linear-gradient(to top, oklch(0.055 0.01 70 / 0.84) 0%, oklch(0.14 0.028 76 / 0.58) 52%, oklch(0.34 0.05 82 / 0.3) 100%)",
               }}
             />
           </div>
