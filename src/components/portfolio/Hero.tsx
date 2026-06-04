@@ -99,7 +99,15 @@ export function Hero() {
               height={1280}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-transparent to-transparent" />
+            {/* Light mode gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-transparent to-transparent dark:hidden" />
+            {/* Dark mode overlay — warm espresso tint */}
+            <div
+              className="absolute inset-0 hidden dark:block"
+              style={{
+                background: "linear-gradient(to top, oklch(0.12 0.012 55 / 0.75) 0%, oklch(0.12 0.012 55 / 0.3) 50%, transparent 100%)",
+              }}
+            />
           </div>
 
           {/* Floating glass cards */}
