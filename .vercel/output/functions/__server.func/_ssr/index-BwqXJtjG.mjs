@@ -4,6 +4,53 @@ import { m as motion, a as useInView, A as AnimatePresence, u as useAnimationFra
 import { A as ArrowUpRight, M as Mail, G as Github, L as Linkedin, X, C as ChevronLeft, a as ChevronRight, E as ExternalLink } from "../_libs/lucide-react.mjs";
 import "../_libs/motion-dom.mjs";
 import "../_libs/motion-utils.mjs";
+function useTheme() {
+  const [dark, setDark] = reactExports.useState(() => {
+    if (typeof window === "undefined") return false;
+    const stored = localStorage.getItem("theme");
+    if (stored) return stored === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+  reactExports.useEffect(() => {
+    const root = document.documentElement;
+    if (dark) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [dark]);
+  return { dark, toggle: () => setDark((d) => !d) };
+}
+function ThemeToggle() {
+  const { dark, toggle } = useTheme();
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "button",
+    {
+      onClick: toggle,
+      "aria-label": dark ? "Switch to light mode" : "Switch to dark mode",
+      className: "grid h-9 w-9 place-items-center rounded-full border hairline transition-colors hover:bg-surface",
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { width: "16", height: "16", viewBox: "0 0 16 16", fill: "none", children: dark ? (
+        // Crescent moon — dark mode indicator
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "path",
+          {
+            d: "M13 8.5A5.5 5.5 0 0 1 7.5 3a5.5 5.5 0 1 0 5.5 5.5z",
+            fill: "currentColor",
+            className: "text-foreground"
+          }
+        )
+      ) : (
+        // Half-filled circle — light mode indicator
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("circle", { cx: "8", cy: "8", r: "5", stroke: "currentColor", strokeWidth: "1.2", className: "text-foreground" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M8 3 A5 5 0 0 1 8 13 Z", fill: "currentColor", className: "text-foreground" })
+        ] })
+      ) })
+    }
+  );
+}
 const links = [
   { href: "#about", label: "About" },
   { href: "#skills", label: "Skills" },
@@ -46,6 +93,7 @@ function Nav() {
                 l.href
               )) }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeToggle, {}),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "a",
                   {
@@ -82,12 +130,12 @@ function Nav() {
   );
 }
 const portrait = "/assets/hunde-portrait-C1AxvAdT.jpg";
-const stack = ["FastAPI", "Next.js", "LangGraph", "React", "AWS", "Python"];
+const stack = ["FastAPI", "Next.js", "LangGraph", "React", "FastAPI Cloud", "Python", "TypeScript"];
 function Hero() {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { id: "top", className: "relative overflow-hidden pt-36 pb-24 md:pt-44 md:pb-32", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-0 -z-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1/2 top-1/3 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-beige/60 blur-3xl animate-glow-pulse" }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto grid max-w-6xl items-center gap-16 px-6 md:grid-cols-[1.15fr_0.85fr]", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           motion.div,
           {
@@ -167,8 +215,8 @@ function Hero() {
             initial: { opacity: 0 },
             animate: { opacity: 1 },
             transition: { duration: 1, delay: 0.5 },
-            className: "mt-12 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs uppercase tracking-[0.18em] text-muted-foreground/70",
-            children: stack.map((s) => /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: s }, s))
+            className: "mt-12 overflow-hidden",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex w-max animate-marquee gap-x-8 text-xs uppercase tracking-[0.18em] text-muted-foreground/70", children: [...stack, ...stack, ...stack].map((s, i) => /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "whitespace-nowrap", children: s }, i)) })
           }
         )
       ] }),
@@ -884,7 +932,7 @@ function Philosophy() {
       {
         ref,
         className: "mt-16 relative overflow-x-auto rounded-none md:rounded-3xl border-y md:border hairline shadow-soft -mx-6 md:mx-0",
-        style: { background: "oklch(0.985 0.005 85)" },
+        style: { background: "var(--color-background)" },
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "div",
@@ -1037,7 +1085,7 @@ function Philosophy() {
                         width: 176,
                         height: 24,
                         rx: 12,
-                        fill: "oklch(0.985 0.005 85)",
+                        fill: "var(--color-background)",
                         stroke: "rgba(210,115,25,0.85)",
                         strokeWidth: 1.2
                       }
@@ -1209,7 +1257,7 @@ function Philosophy() {
                         width: 156,
                         height: 24,
                         rx: 12,
-                        fill: "oklch(0.985 0.005 85)",
+                        fill: "var(--color-background)",
                         stroke: "rgba(25,160,115,0.85)",
                         strokeWidth: 1.2
                       }
