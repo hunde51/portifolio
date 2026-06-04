@@ -7,6 +7,7 @@ import { Projects } from "@/components/portfolio/Projects";
 import { Philosophy } from "@/components/portfolio/Philosophy";
 import { Contact } from "@/components/portfolio/Contact";
 import { Footer } from "@/components/portfolio/Footer";
+import { ScrollToTop } from "@/components/portfolio/ScrollToTop";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,6 +25,9 @@ export const Route = createFileRoute("/")({
           "Building technically robust and practical AI workflows, scalable APIs, and data-intensive platforms.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://hundefest.vercel.app/og-image.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://hundefest.vercel.app/og-image.png" },
     ],
     links: [
       {
@@ -37,7 +41,7 @@ export const Route = createFileRoute("/")({
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap",
       },
     ],
   }),
@@ -55,6 +59,7 @@ function Index() {
       <Philosophy />
       <Contact />
       <Footer />
+      <ScrollToTop />
     </main>
   );
 }

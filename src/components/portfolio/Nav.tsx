@@ -3,15 +3,16 @@ import { motion } from "framer-motion";
 import { ThemeToggle } from "./ThemeToggle";
 
 const links = [
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#contact", label: "Contact" },
+  { href: "#about",    label: "About",    id: "about"    },
+  { href: "#skills",   label: "Skills",   id: "skills"   },
+  { href: "#projects", label: "Projects", id: "projects" },
+  { href: "#contact",  label: "Contact",  id: "contact"  },
 ];
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -20,27 +21,32 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    links.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActive(id); },
+        { rootMargin: "-40% 0px -55% 0px" }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled ? "py-3" : "py-5"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-3" : "py-5"}`}
     >
       <div className="mx-auto max-w-6xl px-6">
-        <div
-          className={`flex items-center justify-between rounded-full px-5 py-3 transition-all duration-500 ${
-            scrolled
-              ? "glass shadow-soft"
-              : "bg-transparent border border-transparent"
-          }`}
-        >
+        <div className={`flex items-center justify-between rounded-full px-5 py-3 transition-all duration-500 ${scrolled ? "glass shadow-soft" : "bg-transparent border border-transparent"}`}>
           <a href="#top" className="flex items-center gap-2 text-sm font-medium tracking-tight">
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-foreground text-[11px] font-semibold text-background">
-              H
-            </span>
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-foreground text-[11px] font-semibold text-background">H</span>
             <span className="hidden sm:inline">Hunde Tesfa</span>
           </a>
 
@@ -49,7 +55,11 @@ export function Nav() {
               <a
                 key={l.href}
                 href={l.href}
-                className="rounded-full px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+                  active === l.id
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
                 {l.label}
               </a>
@@ -59,7 +69,8 @@ export function Nav() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <a
-              href="#contact"
+              href="/resume.pdf"
+              download
               className="hidden rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-transform hover:scale-[1.02] sm:inline-block"
             >
               Resume
@@ -81,7 +92,7 @@ export function Nav() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-xl px-4 py-2.5 text-sm text-foreground hover:bg-surface"
+                className={`rounded-xl px-4 py-2.5 text-sm hover:bg-surface ${active === l.id ? "text-foreground font-medium" : "text-foreground"}`}
               >
                 {l.label}
               </a>

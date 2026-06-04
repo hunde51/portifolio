@@ -12,9 +12,21 @@ const EMAILJS_PUBLIC_KEY  = "hlLIsms4ng18oMgZs";
 export function Contact() {
   const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [emailError, setEmailError] = useState("");
+
+  function validateEmail(val: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const form = formRef.current!;
+    const email = (form.elements.namedItem("from_email") as HTMLInputElement).value;
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+    setEmailError("");
     setStatus("sending");
     try {
       await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, formRef.current!, EMAILJS_PUBLIC_KEY);
@@ -34,7 +46,7 @@ export function Contact() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="font-roboto font-semibold max-w-3xl text-balance text-[clamp(2.25rem,6vw,5rem)] leading-[1] tracking-tight">
+          <h2 className="font-sans font-semibold max-w-3xl text-balance text-[clamp(2.25rem,6vw,5rem)] leading-[1] tracking-tight">
             Let's build something{" "}
             <span className="italic text-muted-foreground">meaningful.</span>
           </h2>
@@ -67,9 +79,11 @@ export function Contact() {
                   required
                   name="from_email"
                   type="email"
+                  onChange={() => setEmailError("")}
                   className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground/60"
                   placeholder="you@studio.com"
                 />
+                {emailError && <p className="mt-1 text-xs text-red-500">{emailError}</p>}
               </Field>
               <Field label="What are you building?">
                 <textarea

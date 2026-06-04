@@ -274,7 +274,7 @@ export function Philosophy() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="font-roboto font-semibold max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
+          <h2 className="font-sans font-semibold max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight">
             <span className="italic text-muted-foreground">a timeline of principles.</span>
           </h2>
         </Reveal>
@@ -310,7 +310,7 @@ export function Philosophy() {
                     <line key={i}
                       x1={x} y1={TRACK1_Y - (tall ? 8 : 4)}
                       x2={x} y2={TRACK1_Y + (tall ? 8 : 4)}
-                      stroke="oklch(0.18 0 0/0.15)"
+                      stroke="var(--color-foreground)" strokeOpacity={0.15}
                       strokeWidth={tall ? 1 : 0.7}
                     />
                   );
@@ -318,7 +318,7 @@ export function Philosophy() {
 
                 {/* Track 1 line */}
                 <line x1={PAD} y1={TRACK1_Y} x2={W - PAD} y2={TRACK1_Y}
-                  stroke="oklch(0.18 0 0/0.15)" strokeWidth={1} />
+                  stroke="var(--color-foreground)" strokeOpacity={0.15} strokeWidth={1} />
 
                 {/* Track 2 line — teal tint */}
                 <line x1={PAD} y1={TRACK2_Y} x2={W - PAD} y2={TRACK2_Y}
@@ -420,7 +420,7 @@ export function Philosophy() {
                       x={pillX} y={pillY + 4}
                       textAnchor="middle"
                       fontSize={11}
-                      fontFamily="monospace"
+                      fontFamily="JetBrains Mono, monospace"
                       fill="rgba(160,85,15,1)"
                       letterSpacing="0.1em"
                     >
@@ -435,29 +435,28 @@ export function Philosophy() {
                   const labelColor = n.error
                     ? "rgba(200,60,40,1)"
                     : n.active
-                    ? "oklch(0.18 0 0)"
-                    : "oklch(0.45 0 0)";
+                    ? "var(--color-foreground)"
+                    : "var(--color-muted-foreground)";
                   return (
                     <motion.g key={n.label}
                       initial={{ opacity: 0 }}
                       animate={inView ? { opacity: 1 } : {}}
                       transition={{ delay: 0.1 + i * 0.07, duration: 0.4 }}
                     >
-                      {/* Tall tick for active node */}
                       {n.active && (
                         <line x1={x} y1={TRACK1_Y} x2={x} y2={TRACK2_Y}
-                          stroke="oklch(0.18 0 0/0.12)" strokeWidth={1} />
+                          stroke="var(--color-foreground)" strokeOpacity={0.12} strokeWidth={1} />
                       )}
                       {/* Timestamp */}
                       <text x={x} y={TRACK1_Y - 18}
                         textAnchor="middle" fontSize={10}
-                        fontFamily="monospace" fill="oklch(0.5 0 0)"
+                        fontFamily="JetBrains Mono, monospace" fill="var(--color-muted-foreground)"
                         letterSpacing="0.05em"
                       >{n.time}</text>
                       {/* Label */}
                       <text x={x} y={TRACK1_Y + 20}
                         textAnchor="middle" fontSize={11}
-                        fontFamily="monospace"
+                        fontFamily="JetBrains Mono, monospace"
                         fontWeight={n.active ? "700" : "400"}
                         fill={labelColor}
                         letterSpacing="0.04em"
@@ -477,12 +476,12 @@ export function Philosophy() {
                     >
                       <text x={x} y={TRACK2_Y + 18}
                         textAnchor="middle" fontSize={10}
-                        fontFamily="monospace" fill="oklch(0.5 0 0)"
+                        fontFamily="JetBrains Mono, monospace" fill="var(--color-muted-foreground)"
                         letterSpacing="0.05em"
                       >{n.time}</text>
                       <text x={x} y={TRACK2_Y + 32}
                         textAnchor="middle" fontSize={11}
-                        fontFamily="monospace" fill="oklch(0.35 0 0)"
+                        fontFamily="JetBrains Mono, monospace" fill="var(--color-foreground)"
                         letterSpacing="0.04em"
                       >{n.label}</text>
                     </motion.g>
@@ -545,7 +544,7 @@ export function Philosophy() {
                     <text
                       x={pill2X} y={pill2Y + 4}
                       textAnchor="middle" fontSize={11}
-                      fontFamily="monospace"
+                      fontFamily="JetBrains Mono, monospace"
                       fill="rgba(15,110,80,1)"
                       letterSpacing="0.1em"
                     >
