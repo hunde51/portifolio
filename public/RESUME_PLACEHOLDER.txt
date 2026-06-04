@@ -1,0 +1,7 @@
+Place your resume PDF here named: resume.pdf
+
+This file should be your actual CV/resume as a PDF.
+The Nav "Resume" button links to /resume.pdf with download.
+
+Recommended: Export from Notion, Google Docs, or a PDF tool.
+Size: keep under 2MB.

@@ -25,9 +25,9 @@ export const Route = createFileRoute("/")({
           "Building technically robust and practical AI workflows, scalable APIs, and data-intensive platforms.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://hundefest.vercel.app/og-image.png" },
+      { property: "og:image", content: "https://hundefest.vercel.app/og-image.svg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://hundefest.vercel.app/og-image.png" },
+      { name: "twitter:image", content: "https://hundefest.vercel.app/og-image.svg" },
     ],
     links: [
       {
