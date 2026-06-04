@@ -41,7 +41,7 @@ const x2 = tx(ARC_TO_T);
 const arcTop = TRACK1_Y - 80;
 const arcPath = `M ${x1} ${TRACK1_Y} L ${x1} ${arcTop + 16} Q ${x1} ${arcTop} ${x1 + 16} ${arcTop} L ${x2 - 16} ${arcTop} Q ${x2} ${arcTop} ${x2} ${arcTop + 16} L ${x2} ${TRACK1_Y}`;
 const pillX = (x1 + x2) / 2;
-const pillY = arcTop - 2;
+const pillY = arcTop; // centered ON the arc line
 
 // Bottom arc geometry
 const bx1 = tx(ARC2_FROM_T);
@@ -49,7 +49,7 @@ const bx2 = tx(ARC2_TO_T);
 const arcBot = TRACK2_Y + 60;
 const arcPath2 = `M ${bx1} ${TRACK2_Y} L ${bx1} ${arcBot - 16} Q ${bx1} ${arcBot} ${bx1 + 16} ${arcBot} L ${bx2 - 16} ${arcBot} Q ${bx2} ${arcBot} ${bx2} ${arcBot - 16} L ${bx2} ${TRACK2_Y}`;
 const pill2X = (bx1 + bx2) / 2;
-const pill2Y = arcBot + 2;
+const pill2Y = arcBot; // centered ON the arc line
 
 // ── Particle canvas ───────────────────────────────────────────────
 type P = { x: number; y: number; vx: number; vy: number; life: number; r: number };
@@ -401,8 +401,8 @@ export function Philosophy() {
                   >
                     {/* Glow behind pill */}
                     <rect
-                      x={pillX - 88} y={pillY - 13}
-                      width={176} height={24} rx={12}
+                      x={pillX - 92} y={pillY - 13}
+                      width={184} height={24} rx={12}
                       fill="none"
                       stroke="rgba(220,130,30,1)"
                       strokeWidth={6}
@@ -410,8 +410,8 @@ export function Philosophy() {
                     />
                     {/* Pill body */}
                     <rect
-                      x={pillX - 88} y={pillY - 13}
-                      width={176} height={24} rx={12}
+                      x={pillX - 92} y={pillY - 13}
+                      width={184} height={24} rx={12}
                       fill="var(--color-background)"
                       stroke="rgba(210,115,25,0.85)"
                       strokeWidth={1.2}
@@ -422,7 +422,7 @@ export function Philosophy() {
                       fontSize={11}
                       fontFamily="monospace"
                       fill="rgba(160,85,15,1)"
-                      letterSpacing="0.12em"
+                      letterSpacing="0.1em"
                     >
                       full-stack → agentic-ai
                     </text>
@@ -528,22 +528,22 @@ export function Philosophy() {
                     transition={{ delay: 2.8, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <rect
-                      x={pill2X - 78} y={pill2Y - 2}
-                      width={156} height={24} rx={12}
+                      x={pill2X - 60} y={pill2Y - 12}
+                      width={120} height={24} rx={12}
                       fill="none"
                       stroke="rgba(30,180,130,1)"
                       strokeWidth={6}
                       style={{ filter: "blur(6px)", opacity: 0.5 } as React.CSSProperties}
                     />
                     <rect
-                      x={pill2X - 78} y={pill2Y - 2}
-                      width={156} height={24} rx={12}
+                      x={pill2X - 60} y={pill2Y - 12}
+                      width={120} height={24} rx={12}
                       fill="var(--color-background)"
                       stroke="rgba(25,160,115,0.85)"
                       strokeWidth={1.2}
                     />
                     <text
-                      x={pill2X} y={pill2Y + 14}
+                      x={pill2X} y={pill2Y + 4}
                       textAnchor="middle" fontSize={11}
                       fontFamily="monospace"
                       fill="rgba(15,110,80,1)"
