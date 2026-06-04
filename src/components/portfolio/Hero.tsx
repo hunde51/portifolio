@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Mail } from "lucide-react";
 import portrait from "@/assets/hunde-portrait.jpg";
 
-const stack = ["FastAPI", "Next.js", "LangGraph", "React", "AWS", "Python"];
+const stack = ["FastAPI", "Next.js", "LangGraph", "React", "FastAPI Cloud", "Python", "TypeScript"];
 
 export function Hero() {
   return (
@@ -12,7 +12,7 @@ export function Hero() {
         <div className="absolute left-1/2 top-1/3 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-beige/60 blur-3xl animate-glow-pulse" />
       </div>
       <div className="mx-auto grid max-w-6xl items-center gap-16 px-6 md:grid-cols-[1.15fr_0.85fr]">
-        <div>
+        <div className="min-w-0">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,11 +74,13 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="mt-12 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs uppercase tracking-[0.18em] text-muted-foreground/70"
+            className="mt-12 overflow-hidden"
           >
-            {stack.map((s) => (
-              <span key={s}>{s}</span>
-            ))}
+            <div className="flex w-max animate-marquee gap-x-8 text-xs uppercase tracking-[0.18em] text-muted-foreground/70">
+              {[...stack, ...stack, ...stack].map((s, i) => (
+                <span key={i} className="whitespace-nowrap">{s}</span>
+              ))}
+            </div>
           </motion.div>
         </div>
 

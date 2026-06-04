@@ -283,7 +283,7 @@ export function Philosophy() {
           <div
             ref={ref}
             className="mt-16 relative overflow-x-auto rounded-none md:rounded-3xl border-y md:border hairline shadow-soft -mx-6 md:mx-0"
-            style={{ background: "oklch(0.985 0.005 85)" }}
+            style={{ background: "var(--color-background)" }}
           >
             {/* Fine grid */}
             <div
@@ -412,7 +412,7 @@ export function Philosophy() {
                     <rect
                       x={pillX - 88} y={pillY - 13}
                       width={176} height={24} rx={12}
-                      fill="oklch(0.985 0.005 85)"
+                      fill="var(--color-background)"
                       stroke="rgba(210,115,25,0.85)"
                       strokeWidth={1.2}
                     />
@@ -538,7 +538,7 @@ export function Philosophy() {
                     <rect
                       x={pill2X - 78} y={pill2Y - 2}
                       width={156} height={24} rx={12}
-                      fill="oklch(0.985 0.005 85)"
+                      fill="var(--color-background)"
                       stroke="rgba(25,160,115,0.85)"
                       strokeWidth={1.2}
                     />
