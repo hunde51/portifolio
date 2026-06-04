@@ -1,5 +1,5 @@
 import { r as reactExports, j as jsxRuntimeExports } from "./react.mjs";
-import { w as isHTMLElement, p as getFeatureDefinitions, R as setFeatureDefinitions, x as isMotionValue, t as isControllingVariants, A as isVariantLabel, v as isForcedMotionValue, e as buildHTMLStyles, f as buildSVGAttrs, z as isSVGTag, L as resolveMotionValue, B as isVariantNode, s as isAnimationControls, N as resolveVariantFromProps, O as scrapeMotionValuesFromProps, P as scrapeMotionValuesFromProps$1, G as optimizedAppearDataAttribute, S as SVGVisualElement, a as HTMLVisualElement, F as Feature, k as createAnimationState, M as resolveVariant, y as isPrimaryPointer, b as addDomEvent, o as frameData, n as frame, h as cancelFrame, E as mixNumber, g as calcLength, l as createBox, m as eachAxis, C as measurePageBox, j as convertBoxToBoundingBox, i as convertBoundingBoxToBox, c as addValueToWillChange, d as animateMotionValue, Q as setDragLock, K as resize, I as percent, u as isElementTextInput, D as microtask, q as globalProjectionState, H as HTMLProjectionNode, r as hover, J as press } from "./motion-dom.mjs";
+import { w as isHTMLElement, p as getFeatureDefinitions, T as setFeatureDefinitions, x as isMotionValue, t as isControllingVariants, A as isVariantLabel, v as isForcedMotionValue, e as buildHTMLStyles, f as buildSVGAttrs, z as isSVGTag, M as resolveMotionValue, B as isVariantNode, s as isAnimationControls, O as resolveVariantFromProps, P as scrapeMotionValuesFromProps, Q as scrapeMotionValuesFromProps$1, G as optimizedAppearDataAttribute, S as SVGVisualElement, a as HTMLVisualElement, F as Feature, k as createAnimationState, N as resolveVariant, y as isPrimaryPointer, b as addDomEvent, o as frameData, n as frame, h as cancelFrame, E as mixNumber, g as calcLength, l as createBox, m as eachAxis, C as measurePageBox, j as convertBoxToBoundingBox, i as convertBoundingBoxToBox, c as addValueToWillChange, d as animateMotionValue, R as setDragLock, K as resize, I as percent, u as isElementTextInput, D as microtask, q as globalProjectionState, H as HTMLProjectionNode, r as hover, J as press, L as resolveElements } from "./motion-dom.mjs";
 import { r as pipe, u as secondsToMilliseconds, p as millisecondsToSeconds, s as progress, f as clamp, q as noop } from "./motion-utils.mjs";
 const LayoutGroupContext = reactExports.createContext({});
 function useConstant(init) {
@@ -1966,7 +1966,75 @@ const featureBundle = {
   ...layout
 };
 const motion = /* @__PURE__ */ createMotionProxy(featureBundle, createDomVisualElement);
+function useAnimationFrame(callback) {
+  const initialTimestamp = reactExports.useRef(0);
+  const { isStatic } = reactExports.useContext(MotionConfigContext);
+  reactExports.useEffect(() => {
+    if (isStatic)
+      return;
+    const provideTimeSinceStart = ({ timestamp, delta }) => {
+      if (!initialTimestamp.current)
+        initialTimestamp.current = timestamp;
+      callback(timestamp - initialTimestamp.current, delta);
+    };
+    frame.update(provideTimeSinceStart, true);
+    return () => cancelFrame(provideTimeSinceStart);
+  }, [callback]);
+}
+const thresholds = {
+  some: 0,
+  all: 1
+};
+function inView(elementOrSelector, onStart, { root, margin: rootMargin, amount = "some" } = {}) {
+  const elements = resolveElements(elementOrSelector);
+  const activeIntersections = /* @__PURE__ */ new WeakMap();
+  const onIntersectionChange = (entries) => {
+    entries.forEach((entry) => {
+      const onEnd = activeIntersections.get(entry.target);
+      if (entry.isIntersecting === Boolean(onEnd))
+        return;
+      if (entry.isIntersecting) {
+        const newOnEnd = onStart(entry.target, entry);
+        if (typeof newOnEnd === "function") {
+          activeIntersections.set(entry.target, newOnEnd);
+        } else {
+          observer.unobserve(entry.target);
+        }
+      } else if (typeof onEnd === "function") {
+        onEnd(entry);
+        activeIntersections.delete(entry.target);
+      }
+    });
+  };
+  const observer = new IntersectionObserver(onIntersectionChange, {
+    root,
+    rootMargin,
+    threshold: typeof amount === "number" ? amount : thresholds[amount]
+  });
+  elements.forEach((element) => observer.observe(element));
+  return () => observer.disconnect();
+}
+function useInView(ref, { root, margin, amount, once = false, initial = false } = {}) {
+  const [isInView, setInView] = reactExports.useState(initial);
+  reactExports.useEffect(() => {
+    if (!ref.current || once && isInView)
+      return;
+    const onEnter = () => {
+      setInView(true);
+      return once ? void 0 : () => setInView(false);
+    };
+    const options = {
+      root: root && root.current || void 0,
+      margin,
+      amount
+    };
+    return inView(ref.current, onEnter, options);
+  }, [root, ref, margin, once, amount]);
+  return isInView;
+}
 export {
   AnimatePresence as A,
-  motion as m
+  useInView as a,
+  motion as m,
+  useAnimationFrame as u
 };

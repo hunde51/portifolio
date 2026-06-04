@@ -1,6 +1,6 @@
 import { j as jsxRuntimeExports, r as reactExports } from "../_libs/react.mjs";
 import { e as emailjs } from "../_libs/emailjs__browser.mjs";
-import { m as motion, A as AnimatePresence } from "../_libs/framer-motion.mjs";
+import { m as motion, a as useInView, A as AnimatePresence, u as useAnimationFrame } from "../_libs/framer-motion.mjs";
 import { A as ArrowUpRight, M as Mail, G as Github, L as Linkedin, X, C as ChevronLeft, a as ChevronRight, E as ExternalLink } from "../_libs/lucide-react.mjs";
 import "../_libs/motion-dom.mjs";
 import "../_libs/motion-utils.mjs";
@@ -381,7 +381,7 @@ const projects = [
     tags: ["RAG", "LangGraph", "Python", "Qdrant"],
     label: "AI System",
     status: "Prototype / In development",
-    live: "#",
+    live: "https://relay-ai-support.fastapicloud.dev/docs",
     github: "https://github.com/hunde51/Relay-AI-Support",
     overview: "Relay AI Support indexes ticket history and support documents to surface relevant answers and suggested actions for support teams. It produces validated suggestions, requires human approval for risky actions, records audit logs, and can execute approved actions via pluggable tools. Built for support orgs and internal ops who need faster, auditable resolution workflows.",
     architecture: "Hybrid retrieval (dense vectors + vector store) with application-level ranking and agent nodes managed by LangGraph. A FastAPI backend handles API, tool registry, and AI workflows; async SQLAlchemy persists AI runs, audit logs, and ticket state. The vectorization pipeline writes embeddings to Qdrant.",
@@ -651,52 +651,590 @@ function Block({ title, body }) {
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-pretty text-[15px] leading-relaxed text-foreground/85", children: body })
   ] });
 }
-const beliefs = [
-  {
-    k: "Scalable systems",
-    v: "Design for the version of the product that exists in two years, not the demo on Monday."
-  },
-  {
-    k: "Backend first",
-    v: "Most product feel comes from the data model. Get the seams right and everything downstream gets easier."
-  },
-  {
-    k: "AI as ingredient",
-    v: "Models are tools, not features. The interesting work is the workflow around them."
-  },
-  {
-    k: "Clean architecture",
-    v: "Boring boundaries. Predictable layers. Code that tomorrow's collaborator can love."
-  },
-  {
-    k: "Human-centered",
-    v: "Interfaces should respect attention. Quiet defaults, clear actions, no theatre."
-  },
-  {
-    k: "Performance",
-    v: "Latency is a UX decision. Treat every millisecond like it belongs to the user."
-  },
-  {
-    k: "Elegant UX",
-    v: "Restraint is a craft. The best moments are the ones nobody notices."
-  },
-  {
-    k: "Production ready",
-    v: "If it can't be observed, deployed, and rolled back, it isn't built yet."
-  }
+const W = 1100;
+const H = 400;
+const PAD = 40;
+const TRACK1_Y = 130;
+const TRACK2_Y = 230;
+const TICK_COUNT = 80;
+const mainNodes = [
+  { t: 0.08, time: "2023", label: "first-commit", active: false, error: false },
+  { t: 0.35, time: "2024", label: "frontend", active: true, error: false },
+  { t: 0.62, time: "2025", label: "backend", active: false, error: false },
+  { t: 0.88, time: "2026", label: "agentic-ai", active: false, error: false }
 ];
+const restoredNodes = [
+  { t: 0.08, time: "2023", label: "learning-phase" },
+  { t: 0.35, time: "2024", label: "shipped-products" },
+  { t: 0.88, time: "2026", label: "ai-systems" }
+];
+const ARC_FROM_T = 0.35;
+const ARC_TO_T = 0.88;
+const ARC2_FROM_T = 0.08;
+const ARC2_TO_T = 0.88;
+function tx(t) {
+  return PAD + t * (W - PAD * 2);
+}
+const x1 = tx(ARC_FROM_T);
+const x2 = tx(ARC_TO_T);
+const arcTop = TRACK1_Y - 80;
+const arcPath = `M ${x1} ${TRACK1_Y} L ${x1} ${arcTop + 16} Q ${x1} ${arcTop} ${x1 + 16} ${arcTop} L ${x2 - 16} ${arcTop} Q ${x2} ${arcTop} ${x2} ${arcTop + 16} L ${x2} ${TRACK1_Y}`;
+const pillX = (x1 + x2) / 2;
+const pillY = arcTop - 2;
+const bx1 = tx(ARC2_FROM_T);
+const bx2 = tx(ARC2_TO_T);
+const arcBot = TRACK2_Y + 60;
+const arcPath2 = `M ${bx1} ${TRACK2_Y} L ${bx1} ${arcBot - 16} Q ${bx1} ${arcBot} ${bx1 + 16} ${arcBot} L ${bx2 - 16} ${arcBot} Q ${bx2} ${arcBot} ${bx2} ${arcBot - 16} L ${bx2} ${TRACK2_Y}`;
+const pill2X = (bx1 + bx2) / 2;
+const pill2Y = arcBot + 2;
+function Embers({ active }) {
+  const canvasRef = reactExports.useRef(null);
+  const progress = reactExports.useRef(0);
+  const ps = reactExports.useRef([]);
+  function sample(t) {
+    const vLen = TRACK1_Y - (arcTop + 16);
+    const hLen = x2 - x1;
+    const cLen = 16 * (Math.PI / 2);
+    const total = vLen + cLen + hLen + cLen + vLen;
+    const v1 = vLen / total;
+    const c1 = cLen / total;
+    const h = hLen / total;
+    const c2 = cLen / total;
+    if (t < v1) {
+      const s = t / v1;
+      return { x: x1, y: TRACK1_Y - s * vLen };
+    } else if (t < v1 + c1) {
+      const s = (t - v1) / c1;
+      const angle = Math.PI + s * (Math.PI / 2);
+      return { x: x1 + 16 + 16 * Math.cos(angle), y: arcTop + 16 + 16 * Math.sin(angle) };
+    } else if (t < v1 + c1 + h) {
+      const s = (t - v1 - c1) / h;
+      return { x: x1 + s * hLen, y: arcTop };
+    } else if (t < v1 + c1 + h + c2) {
+      const s = (t - v1 - c1 - h) / c2;
+      const angle = -Math.PI / 2 + s * (Math.PI / 2);
+      return { x: x2 - 16 + 16 * Math.cos(angle), y: arcTop + 16 + 16 * Math.sin(angle) };
+    } else {
+      const s = (t - v1 - c1 - h - c2) / v1;
+      return { x: x2, y: arcTop + 16 + s * vLen };
+    }
+  }
+  useAnimationFrame((_, delta) => {
+    if (!active) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    progress.current = Math.min(progress.current + 55e-5 * delta, 1);
+    const { x, y } = sample(progress.current);
+    if (progress.current < 1) {
+      for (let i = 0; i < 4; i++) {
+        ps.current.push({
+          x: x + (Math.random() - 0.5) * 5,
+          y: y + (Math.random() - 0.5) * 5,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: -Math.random() * 1.4 - 0.3,
+          life: 1,
+          r: Math.random() * 2.5 + 0.8
+        });
+      }
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ps.current = ps.current.filter((p) => p.life > 0.02);
+    for (const p of ps.current) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.025;
+      const a = p.life;
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = `rgba(220,110,30,0.8)`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * a + 0.3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${Math.round(200 + 55 * a)},${Math.round(100 + 40 * a)},20,1)`;
+      ctx.fill();
+      ctx.restore();
+    }
+    if (progress.current < 1) {
+      ctx.save();
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 14);
+      g.addColorStop(0, "rgba(255,210,100,1)");
+      g.addColorStop(0.5, "rgba(220,110,30,0.7)");
+      g.addColorStop(1, "rgba(220,110,30,0)");
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = "rgba(220,110,30,1)";
+      ctx.beginPath();
+      ctx.arc(x, y, 14, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.restore();
+    }
+  });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "canvas",
+    {
+      ref: canvasRef,
+      width: W,
+      height: H,
+      style: { position: "absolute", inset: 0, pointerEvents: "none", zIndex: 20 }
+    }
+  );
+}
+function Embers2({ active }) {
+  const canvasRef = reactExports.useRef(null);
+  const progress = reactExports.useRef(0);
+  const ps = reactExports.useRef([]);
+  function sample(t) {
+    const vLen = arcBot - 16 - TRACK2_Y;
+    const hLen = bx2 - bx1;
+    const cLen = 16 * (Math.PI / 2);
+    const total = vLen + cLen + hLen + cLen + vLen;
+    const v1 = vLen / total;
+    const c1 = cLen / total;
+    const h = hLen / total;
+    const c2 = cLen / total;
+    if (t < v1) {
+      return { x: bx1, y: TRACK2_Y + t / v1 * vLen };
+    } else if (t < v1 + c1) {
+      const s = (t - v1) / c1;
+      return { x: bx1 + 16 + 16 * Math.cos(Math.PI + Math.PI / 2 * s), y: arcBot - 16 + 16 * Math.sin(Math.PI + Math.PI / 2 * s) };
+    } else if (t < v1 + c1 + h) {
+      const s = (t - v1 - c1) / h;
+      return { x: bx1 + s * hLen, y: arcBot };
+    } else if (t < v1 + c1 + h + c2) {
+      const s = (t - v1 - c1 - h) / c2;
+      return { x: bx2 - 16 + 16 * Math.cos(-Math.PI / 2 + Math.PI / 2 * s), y: arcBot - 16 + 16 * Math.sin(-Math.PI / 2 + Math.PI / 2 * s) };
+    } else {
+      const s = (t - v1 - c1 - h - c2) / v1;
+      return { x: bx2, y: arcBot - s * vLen };
+    }
+  }
+  useAnimationFrame((_, delta) => {
+    if (!active) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    progress.current = Math.min(progress.current + 45e-5 * delta, 1);
+    const { x, y } = sample(progress.current);
+    if (progress.current < 1) {
+      for (let i = 0; i < 4; i++) {
+        ps.current.push({
+          x: x + (Math.random() - 0.5) * 5,
+          y: y + (Math.random() - 0.5) * 5,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: Math.random() * 1.4 + 0.3,
+          // downward
+          life: 1,
+          r: Math.random() * 2.5 + 0.8
+        });
+      }
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ps.current = ps.current.filter((p) => p.life > 0.02);
+    for (const p of ps.current) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.025;
+      const a = p.life;
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = "rgba(30,160,120,0.8)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * a + 0.3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(20,${Math.round(160 + 40 * a)},${Math.round(100 + 55 * a)},1)`;
+      ctx.fill();
+      ctx.restore();
+    }
+    if (progress.current < 1) {
+      ctx.save();
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 14);
+      g.addColorStop(0, "rgba(100,240,200,1)");
+      g.addColorStop(0.5, "rgba(30,160,120,0.7)");
+      g.addColorStop(1, "rgba(30,160,120,0)");
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = "rgba(30,160,120,1)";
+      ctx.beginPath();
+      ctx.arc(x, y, 14, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.restore();
+    }
+  });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "canvas",
+    {
+      ref: canvasRef,
+      width: W,
+      height: H,
+      style: { position: "absolute", inset: 0, pointerEvents: "none", zIndex: 21 }
+    }
+  );
+}
 function Philosophy() {
+  const ref = reactExports.useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   return /* @__PURE__ */ jsxRuntimeExports.jsx("section", { className: "relative py-32 md:py-40", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto max-w-6xl px-6", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Reveal, { children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4 text-xs uppercase tracking-[0.22em] text-muted-foreground", children: "04 — Building philosophy" }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Reveal, { delay: 0.05, children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-roboto font-semibold max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "italic text-muted-foreground", children: "in eight notes." }) }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-16 grid gap-px overflow-hidden rounded-3xl border hairline bg-border/40 sm:grid-cols-2 lg:grid-cols-4", children: beliefs.map((b, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(Reveal, { delay: i % 4 * 0.05, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "group h-full bg-background p-7 transition-colors duration-500 hover:bg-surface", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 text-[10px] uppercase tracking-[0.22em] text-muted-foreground", children: [
-        "0",
-        i + 1
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-2xl leading-tight tracking-tight", children: b.k }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-4 text-sm leading-relaxed text-muted-foreground", children: b.v })
-    ] }) }, b.k)) })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Reveal, { delay: 0.05, children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-roboto font-semibold max-w-3xl text-balance text-[clamp(2rem,5vw,3.75rem)] leading-[1.05] tracking-tight", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "italic text-muted-foreground", children: "a timeline of principles." }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Reveal, { delay: 0.1, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        ref,
+        className: "mt-16 relative overflow-x-auto rounded-none md:rounded-3xl border-y md:border hairline shadow-soft -mx-6 md:mx-0",
+        style: { background: "oklch(0.985 0.005 85)" },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: "absolute inset-0 pointer-events-none overflow-hidden",
+              style: {
+                backgroundImage: "linear-gradient(oklch(0.18 0 0/0.05) 1px,transparent 1px),linear-gradient(90deg,oklch(0.18 0 0/0.05) 1px,transparent 1px)",
+                backgroundSize: "32px 32px"
+              }
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { position: "relative", width: W, minWidth: W, height: H }, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Embers, { active: inView }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Embers2, { active: inView }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("svg", { width: W, height: H, style: { display: "block", position: "relative", zIndex: 10 }, children: [
+              Array.from({ length: TICK_COUNT }).map((_, i) => {
+                const x = PAD + i / (TICK_COUNT - 1) * (W - PAD * 2);
+                const tall = i % 10 === 0;
+                return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "line",
+                  {
+                    x1: x,
+                    y1: TRACK1_Y - (tall ? 8 : 4),
+                    x2: x,
+                    y2: TRACK1_Y + (tall ? 8 : 4),
+                    stroke: "oklch(0.18 0 0/0.15)",
+                    strokeWidth: tall ? 1 : 0.7
+                  },
+                  i
+                );
+              }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "line",
+                {
+                  x1: PAD,
+                  y1: TRACK1_Y,
+                  x2: W - PAD,
+                  y2: TRACK1_Y,
+                  stroke: "oklch(0.18 0 0/0.15)",
+                  strokeWidth: 1
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "line",
+                {
+                  x1: PAD,
+                  y1: TRACK2_Y,
+                  x2: W - PAD,
+                  y2: TRACK2_Y,
+                  stroke: "oklch(0.55 0.08 180/0.35)",
+                  strokeWidth: 1
+                }
+              ),
+              Array.from({ length: TICK_COUNT }).map((_, i) => {
+                const x = PAD + i / (TICK_COUNT - 1) * (W - PAD * 2);
+                const tall = i % 10 === 0;
+                return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "line",
+                  {
+                    x1: x,
+                    y1: TRACK2_Y - (tall ? 6 : 3),
+                    x2: x,
+                    y2: TRACK2_Y + (tall ? 6 : 3),
+                    stroke: "oklch(0.55 0.08 180/0.2)",
+                    strokeWidth: 0.7
+                  },
+                  `t2-${i}`
+                );
+              }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                motion.line,
+                {
+                  x1,
+                  y1: TRACK1_Y,
+                  x2: x1,
+                  y2: TRACK2_Y,
+                  stroke: "oklch(0.18 0 0/0.2)",
+                  strokeWidth: 1,
+                  strokeDasharray: "3 3",
+                  initial: { pathLength: 0, opacity: 0 },
+                  animate: inView ? { pathLength: 1, opacity: 1 } : {},
+                  transition: { delay: 0.6, duration: 0.5 }
+                }
+              ),
+              inView && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                motion.path,
+                {
+                  d: arcPath,
+                  fill: "none",
+                  stroke: "rgba(220,120,30,0.4)",
+                  strokeWidth: 8,
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  style: { filter: "blur(6px)" },
+                  initial: { pathLength: 0, opacity: 0 },
+                  animate: { pathLength: 1, opacity: 1 },
+                  transition: { duration: 1.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }
+                }
+              ),
+              inView && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                motion.path,
+                {
+                  d: arcPath,
+                  fill: "none",
+                  stroke: "rgba(210,115,25,0.95)",
+                  strokeWidth: 1.5,
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  initial: { pathLength: 0, opacity: 0 },
+                  animate: { pathLength: 1, opacity: 1 },
+                  transition: { duration: 1.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }
+                }
+              ),
+              inView && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                motion.polygon,
+                {
+                  points: `${x1 - 4},${TRACK1_Y - 8} ${x1 + 4},${TRACK1_Y - 8} ${x1},${TRACK1_Y - 1}`,
+                  fill: "rgba(210,115,25,0.95)",
+                  initial: { opacity: 0 },
+                  animate: { opacity: 1 },
+                  transition: { delay: 2, duration: 0.3 }
+                }
+              ),
+              inView && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                motion.g,
+                {
+                  initial: { opacity: 0, y: -6 },
+                  animate: { opacity: 1, y: 0 },
+                  transition: { delay: 2.1, duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "rect",
+                      {
+                        x: pillX - 88,
+                        y: pillY - 13,
+                        width: 176,
+                        height: 24,
+                        rx: 12,
+                        fill: "none",
+                        stroke: "rgba(220,130,30,1)",
+                        strokeWidth: 6,
+                        style: { filter: "blur(6px)", opacity: 0.55 }
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "rect",
+                      {
+                        x: pillX - 88,
+                        y: pillY - 13,
+                        width: 176,
+                        height: 24,
+                        rx: 12,
+                        fill: "oklch(0.985 0.005 85)",
+                        stroke: "rgba(210,115,25,0.85)",
+                        strokeWidth: 1.2
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "text",
+                      {
+                        x: pillX,
+                        y: pillY + 4,
+                        textAnchor: "middle",
+                        fontSize: 11,
+                        fontFamily: "monospace",
+                        fill: "rgba(160,85,15,1)",
+                        letterSpacing: "0.12em",
+                        children: "full-stack → agentic-ai"
+                      }
+                    )
+                  ]
+                }
+              ),
+              mainNodes.map((n, i) => {
+                const x = tx(n.t);
+                const labelColor = n.error ? "rgba(200,60,40,1)" : n.active ? "oklch(0.18 0 0)" : "oklch(0.45 0 0)";
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  motion.g,
+                  {
+                    initial: { opacity: 0 },
+                    animate: inView ? { opacity: 1 } : {},
+                    transition: { delay: 0.1 + i * 0.07, duration: 0.4 },
+                    children: [
+                      n.active && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "line",
+                        {
+                          x1: x,
+                          y1: TRACK1_Y,
+                          x2: x,
+                          y2: TRACK2_Y,
+                          stroke: "oklch(0.18 0 0/0.12)",
+                          strokeWidth: 1
+                        }
+                      ),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "text",
+                        {
+                          x,
+                          y: TRACK1_Y - 18,
+                          textAnchor: "middle",
+                          fontSize: 10,
+                          fontFamily: "monospace",
+                          fill: "oklch(0.5 0 0)",
+                          letterSpacing: "0.05em",
+                          children: n.time
+                        }
+                      ),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "text",
+                        {
+                          x,
+                          y: TRACK1_Y + 20,
+                          textAnchor: "middle",
+                          fontSize: 11,
+                          fontFamily: "monospace",
+                          fontWeight: n.active ? "700" : "400",
+                          fill: labelColor,
+                          letterSpacing: "0.04em",
+                          children: n.label
+                        }
+                      )
+                    ]
+                  },
+                  n.label
+                );
+              }),
+              restoredNodes.map((n, i) => {
+                const x = tx(n.t);
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  motion.g,
+                  {
+                    initial: { opacity: 0 },
+                    animate: inView ? { opacity: 1 } : {},
+                    transition: { delay: 0.8 + i * 0.1, duration: 0.4 },
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "text",
+                        {
+                          x,
+                          y: TRACK2_Y + 18,
+                          textAnchor: "middle",
+                          fontSize: 10,
+                          fontFamily: "monospace",
+                          fill: "oklch(0.5 0 0)",
+                          letterSpacing: "0.05em",
+                          children: n.time
+                        }
+                      ),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "text",
+                        {
+                          x,
+                          y: TRACK2_Y + 32,
+                          textAnchor: "middle",
+                          fontSize: 11,
+                          fontFamily: "monospace",
+                          fill: "oklch(0.35 0 0)",
+                          letterSpacing: "0.04em",
+                          children: n.label
+                        }
+                      )
+                    ]
+                  },
+                  n.label
+                );
+              }),
+              inView && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                motion.path,
+                {
+                  d: arcPath2,
+                  fill: "none",
+                  stroke: "rgba(30,180,130,0.4)",
+                  strokeWidth: 8,
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  style: { filter: "blur(6px)" },
+                  initial: { pathLength: 0, opacity: 0 },
+                  animate: { pathLength: 1, opacity: 1 },
+                  transition: { duration: 1.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }
+                }
+              ),
+              inView && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                motion.path,
+                {
+                  d: arcPath2,
+                  fill: "none",
+                  stroke: "rgba(25,160,115,0.9)",
+                  strokeWidth: 1.5,
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  initial: { pathLength: 0, opacity: 0 },
+                  animate: { pathLength: 1, opacity: 1 },
+                  transition: { duration: 1.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }
+                }
+              ),
+              inView && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                motion.g,
+                {
+                  initial: { opacity: 0, y: 6 },
+                  animate: { opacity: 1, y: 0 },
+                  transition: { delay: 2.8, duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "rect",
+                      {
+                        x: pill2X - 78,
+                        y: pill2Y - 2,
+                        width: 156,
+                        height: 24,
+                        rx: 12,
+                        fill: "none",
+                        stroke: "rgba(30,180,130,1)",
+                        strokeWidth: 6,
+                        style: { filter: "blur(6px)", opacity: 0.5 }
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "rect",
+                      {
+                        x: pill2X - 78,
+                        y: pill2Y - 2,
+                        width: 156,
+                        height: 24,
+                        rx: 12,
+                        fill: "oklch(0.985 0.005 85)",
+                        stroke: "rgba(25,160,115,0.85)",
+                        strokeWidth: 1.2
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "text",
+                      {
+                        x: pill2X,
+                        y: pill2Y + 14,
+                        textAnchor: "middle",
+                        fontSize: 11,
+                        fontFamily: "monospace",
+                        fill: "rgba(15,110,80,1)",
+                        letterSpacing: "0.1em",
+                        children: "full journey"
+                      }
+                    )
+                  ]
+                }
+              )
+            ] })
+          ] })
+        ]
+      }
+    ) })
   ] }) });
 }
 const EMAILJS_SERVICE_ID = "service_nxrv4iu";

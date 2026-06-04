@@ -2935,7 +2935,7 @@ function resolveElements(elementOrSelector, scope, selectorCache) {
     return [elementOrSelector];
   } else if (typeof elementOrSelector === "string") {
     let root = document;
-    const elements = selectorCache?.[elementOrSelector] ?? root.querySelectorAll(elementOrSelector);
+    const elements = root.querySelectorAll(elementOrSelector);
     return elements ? Array.from(elements) : [];
   }
   return Array.from(elementOrSelector).filter((element) => element != null);
@@ -5910,14 +5910,15 @@ export {
   percent as I,
   press as J,
   resize as K,
-  resolveMotionValue as L,
-  resolveVariant as M,
-  resolveVariantFromProps as N,
-  scrapeMotionValuesFromProps$1 as O,
-  scrapeMotionValuesFromProps as P,
-  setDragLock as Q,
-  setFeatureDefinitions as R,
+  resolveElements as L,
+  resolveMotionValue as M,
+  resolveVariant as N,
+  resolveVariantFromProps as O,
+  scrapeMotionValuesFromProps$1 as P,
+  scrapeMotionValuesFromProps as Q,
+  setDragLock as R,
   SVGVisualElement as S,
+  setFeatureDefinitions as T,
   HTMLVisualElement as a,
   addDomEvent as b,
   addValueToWillChange as c,

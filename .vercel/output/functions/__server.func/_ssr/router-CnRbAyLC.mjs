@@ -15,7 +15,7 @@ import "crypto";
 import "async_hooks";
 import "stream";
 import "../_libs/isbot.mjs";
-const appCss = "/assets/styles-DNnpXPp6.css";
+const appCss = "/assets/styles-Csk-Lgqh.css";
 const faviconUrl = "/assets/favicon-C-hdOebb.png";
 function NotFoundComponent() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex min-h-screen items-center justify-center bg-background px-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-md text-center", children: [
@@ -104,7 +104,7 @@ function RootComponent() {
   const { queryClient } = Route$1.useRouteContext();
   return /* @__PURE__ */ jsxRuntimeExports.jsx(QueryClientProvider, { client: queryClient, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Outlet, {}) });
 }
-const $$splitComponentImporter = () => import("./index-DsncgChM.mjs");
+const $$splitComponentImporter = () => import("./index-C0EJfwBm.mjs");
 const Route = createFileRoute("/")({
   head: () => ({
     meta: [{
