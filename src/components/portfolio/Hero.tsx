@@ -97,7 +97,7 @@ export function Hero() {
               alt="Portrait of Hunde Tesfa"
               width={1024}
               height={1280}
-              className="h-full w-full object-cover transition-all duration-700 dark:[filter:grayscale(1)_brightness(0.75)_contrast(1.05)]"
+              className="h-full w-full object-cover transition-all duration-700 dark:[filter:grayscale(1)_brightness(0.88)]"
             />
             {/* Light mode gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-transparent to-transparent dark:hidden" />
